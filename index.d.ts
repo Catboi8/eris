@@ -18,12 +18,22 @@ declare namespace Eris {
   type InteractionOptions = {
     allowedMentions?: AllowedMentions;
     content?: string;
-    embed?: EmbedOptions;
+    embeds?: EmbedOptions;
     flags?: number;
-    messageReference?: MessageReferenceReply;
     tts?: boolean;
     type: number;
   };
+
+  type InteractionContent = Pick<InteractionOptions, "content" | "embeds" | "flags" | "allowedMentions" | "tts">;
+
+  interface InteractionWebhookContent {
+    allowedMentions?: AllowedMentions;
+    content?: string;
+    embeds?: EmbedOptions[];
+    file?: MessageFile | MessageFile[];
+    flags?: number;
+    tts?: boolean;
+  }
 
   // Cache
   type Uncached = { id: string };
@@ -79,7 +89,7 @@ declare namespace Eris {
   type MessageContent = string | AdvancedMessageContent;
   type MFALevel = 0 | 1;
   type PossiblyUncachedMessage = Message | { channel: TextableChannel | { id: string; guild?: Uncached }; guildID?: string; id: string };
-  type InteractionType = 1 | 2;
+  type InteractionType = 1 | 2 | 3;
 
   // Permission
   type PermissionType = "role" | "member";
@@ -1048,6 +1058,7 @@ declare namespace Eris {
     content?: string;
     embeds?: EmbedOptions[];
     file?: MessageFile | MessageFile[];
+    flags?: number;
     tts?: boolean;
     username?: string;
     wait?: boolean;
@@ -2213,13 +2224,13 @@ declare namespace Eris {
     type: number;
     version: number;
     acknowledge(): Promise<void>;
-    createFollowup(content: InteractionOptions): Promise<Message>;
-    createMessage(content: InteractionOptions): Promise<void>;
-    defer(): Promise<void>;
+    createFollowup(content: string | InteractionWebhookContent): Promise<Message<GuildTextableChannel>>;
+    createMessage(content: string | InteractionContent): Promise<void>;
+    defer(flags: number): Promise<void>;
     deferUpdate(): Promise<void>;
     delete(messageId: string): Promise<void>;
-    edit(messageId: string, content: InteractionOptions): Promise<Message>;
-    editParent(content: InteractionOptions): Promise<void>;
+    edit(messageId: string, content: string | MessageWebhookContent): Promise<Message<GuildTextableChannel>>;
+    editParent(content: MessageWebhookContent): Promise<Message<GuildTextableChannel>>;
   }
 
   // If CT (count) is "withMetadata", it will not have count properties
