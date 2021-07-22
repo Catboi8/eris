@@ -16,24 +16,19 @@ declare namespace Eris {
   // TYPES
 
   type InteractionOptions = {
+    type: InteractionResponseType;
+    data?: InteractionContent
+  };
+
+  type InteractionContent = {
     allowedMentions?: AllowedMentions;
     content?: string;
     embeds?: EmbedOptions;
     flags?: number;
     tts?: boolean;
-    type: number;
   };
 
-  type InteractionContent = Pick<InteractionOptions, "content" | "embeds" | "flags" | "allowedMentions" | "tts">;
-
-  interface InteractionWebhookContent {
-    allowedMentions?: AllowedMentions;
-    content?: string;
-    embeds?: EmbedOptions[];
-    file?: MessageFile | MessageFile[];
-    flags?: number;
-    tts?: boolean;
-  }
+  type InteractionWebhookContent = Pick<WebhookPayload, "content" | "embeds" | "file" | "allowedMentions" | "tts" | "flags">;
 
   // Cache
   type Uncached = { id: string };
@@ -90,6 +85,7 @@ declare namespace Eris {
   type MFALevel = 0 | 1;
   type PossiblyUncachedMessage = Message | { channel: TextableChannel | { id: string; guild?: Uncached }; guildID?: string; id: string };
   type InteractionType = 1 | 2 | 3;
+  type InteractionResponseType = 1 | 4 | 5 | 6 | 7;
 
   // Permission
   type PermissionType = 0 | 1;
@@ -2237,18 +2233,19 @@ declare namespace Eris {
     applicationId: string;
     channelId: string;
     data?: {
-      componentType?: number;
+      componentType?: 2 | 3;
       id?: string;
       custom_id?: string;
       name?: string;
-      options?: { name?: string; value: string }
+      options?: [{ name?: string; value: string }]
+      values?: [string]
     };
     guildId?: string;
     id: string;
     member: Member;
-    message: Message;
+    message?: Message;
     token: string;
-    type: number;
+    type: InteractionType;
     version: number;
     acknowledge(): Promise<void>;
     createFollowup(content: string | InteractionWebhookContent): Promise<Message<GuildTextableChannel>>;
