@@ -2315,13 +2315,14 @@ declare namespace Eris {
     user?: User;
     version: number;
     acknowledge(flags?: number): Promise<void>;
-    createFollowup(content: string | InteractionWebhookContent): Promise<Message<GuildTextableChannel>>;
+    createFollowup(content: string | InteractionWebhookContent): Promise<Message>;
     createMessage(content: string | InteractionContent): Promise<void>;
     defer(flags?: number): Promise<void>;
     deferUpdate(): Promise<void>;
-    delete(messageId: string): Promise<void>;
-    edit(messageId: string, content: string | MessageWebhookContent): Promise<Message<GuildTextableChannel>>;
-    editParent(content: MessageWebhookContent): Promise<Message<GuildTextableChannel>>;
+    deleteMessage(messageId: string): Promise<void>;
+    editMessage(messageId: string, content: string | MessageWebhookContent): Promise<Message>;
+    editParent(content: MessageWebhookContent): Promise<Message>;
+    getOriginalMessage(): Promise<Message>
   }
 
   // If CT (count) is "withMetadata", it will not have count properties
@@ -2333,10 +2334,10 @@ declare namespace Eris {
     guild: CT extends "withMetadata"
       ? Guild // Invite with Metadata always has guild prop
       : CH extends Extract<InviteChannel, GroupChannel> // Invite without Metadata
-      ? never // If the channel is GroupChannel, there is no guild
-      : CH extends Exclude<InviteChannel, InvitePartialChannel> // Invite without Metadata and not GroupChanel
-      ? Guild // If the invite channel is not partial
-      : Guild | undefined; // If the invite channel is partial
+        ? never // If the channel is GroupChannel, there is no guild
+        : CH extends Exclude<InviteChannel, InvitePartialChannel> // Invite without Metadata and not GroupChanel
+          ? Guild // If the invite channel is not partial
+          : Guild | undefined; // If the invite channel is partial
     inviter?: User;
     maxAge: CT extends "withMetadata" ? number : null;
     maxUses: CT extends "withMetadata" ? number : null;
@@ -2413,9 +2414,9 @@ declare namespace Eris {
     reactions: { [s: string]: { count: number; me: boolean } };
     referencedMessage?: Message | null;
     roleMentions: string[];
+    stickerItems?: StickerItems[];
     /** @deprecated */
     stickers?: Sticker[];
-    stickerItems?: StickerItems[];
     timestamp: number;
     tts: boolean;
     type: number;
