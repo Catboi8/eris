@@ -77,12 +77,11 @@ declare namespace Eris {
   // Interaction
   type InteractionType = 1 | 2 | 3;
   type InteractionResponseType = 1 | 4 | 5 | 6 | 7;
-  type SlashCommandOptionType = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 
   type InteractionDataOptions = {
     name: string;
-    type: SlashCommandOptionType;
-    value?: SlashCommandOptionType;
+    type: SlashCommandOptionTypes;
+    value?: SlashCommandOptionTypes;
     options?: InteractionDataOptions[];
   };
 
@@ -100,6 +99,45 @@ declare namespace Eris {
   };
 
   type InteractionWebhookContent = Pick<WebhookPayload, "content" | "embeds" | "file" | "allowedMentions" | "tts" | "flags">;
+
+  //Slash Commands
+  type SlashCommandTypes = 1 | 2 | 3;
+
+  type SlashCommandOptionTypes = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
+
+  type SlashCommandOptions = {
+    type: SlashCommandOptionTypes;
+    name: string;
+    description: string;
+    required?: boolean;
+    choices?: { name: string; value: string | number};
+  };
+
+  type SlashCommand = {
+    id: string;
+    application_id: string;
+    guild_id?: string;
+    name: string;
+    description: string;
+    options?: SlashCommandOptions[];
+    type?: SlashCommandTypes;
+    defaultPermission?: boolean;
+  };
+
+  type SlashCommandStructure = Exclude<SlashCommand, "id" | "application_id" | "guild_id">;
+
+  type SlashCommandPermissions = {
+    id: string;
+    type: 1 | 2;
+    permission: boolean;
+  };
+
+  type GuildSlashCommandPermissions = {
+    id: string;
+    application_id: string;
+    guild_id: string;
+    permissions?: SlashCommandPermissions[];
+  };
 
   // Permission
   type PermissionType = 0 | 1;
@@ -1396,6 +1434,25 @@ declare namespace Eris {
       RESUMED: 9;
       DISCONNECT: 13;
     };
+    CommandOptionTypes: {
+      SUB_COMMAND:       1;
+      SUB_COMMAND_GROUP: 2;
+      STRING:            3;
+      INTEGER:           4;
+      BOOLEAN:           5;
+      USER:              6;
+      CHANNEL:           7;
+      ROLE:              8;
+      MENTIONABLE:       9;
+    };
+    CommandPermissionTypes: {
+      ROLE: 1;
+      USER: 2;
+    };
+    CommandTypes: {
+      COMMAND: 1;
+      USER: 2;
+      MESSAGE: 3;
     InteractionTypes: {
       ping: 1;
       slashCommand: 2;
@@ -1594,6 +1651,9 @@ declare namespace Eris {
     addRelationship(userID: string, block?: boolean): Promise<void>;
     addSelfPremiumSubscription(token: string, plan: string): Promise<void>;
     banGuildMember(guildID: string, userID: string, deleteMessageDays?: number, reason?: string): Promise<void>;
+    bulkEditCommandPermissions(guildID: string, permissions: SlashCommandPermissions[]): Promise<GuildSlashCommandPermissions[]>;
+    bulkEditCommands(commands: SlashCommandStructure[]): Promise<SlashCommand[]>;
+    bulkEditGuildCommands(guildID: string, commands: SlashCommandStructure[]): Promise<SlashCommand[]>;
     closeVoiceConnection(guildID: string): void;
     connect(): Promise<void>;
     createChannel(guildID: string, name: string): Promise<TextChannel>;
@@ -1705,8 +1765,10 @@ declare namespace Eris {
       options: { name: string; avatar?: string | null },
       reason?: string
     ): Promise<Webhook>;
+    createCommand(command: SlashCommandStructure): Promise<SlashCommand>;
     createGroupChannel(userIDs: string[]): Promise<GroupChannel>;
     createGuild(name: string, options?: CreateGuildOptions): Promise<Guild>;
+    createGuildCommand(guildID: string, command: SlashCommandStructure): Promise<SlashCommand>;
     createGuildEmoji(guildID: string, options: EmojiOptions, reason?: string): Promise<Emoji>;
     createGuildFromTemplate(code: string, name: string, icon?: string): Promise<Guild>;
     createGuildTemplate(guildID: string, name: string, description?: string | null): Promise<GuildTemplate>;
@@ -1716,7 +1778,9 @@ declare namespace Eris {
     crosspostMessage(channelID: string, messageID: string): Promise<Message>;
     deleteChannel(channelID: string, reason?: string): Promise<void>;
     deleteChannelPermission(channelID: string, overwriteID: string, reason?: string): Promise<void>;
+    deleteCommand(commandID: string): Promise<void>;
     deleteGuild(guildID: string): Promise<void>;
+    deleteGuildCommand(guildID: string, commandID: string): Promise<void>;
     deleteGuildDiscoverySubcategory(guildID: string, categoryID: string, reason?: string): Promise<void>;
     deleteGuildEmoji(guildID: string, emojiID: string, reason?: string): Promise<void>;
     deleteGuildIntegration(guildID: string, integrationID: string): Promise<void>;
@@ -1747,7 +1811,10 @@ declare namespace Eris {
       reason?: string
     ): Promise<void>;
     editChannelPosition(channelID: string, position: number, options?: EditChannelPositionOptions): Promise<void>;
+    editCommand(commandID: string, command: SlashCommandStructure): Promise<SlashCommand>;
+    editCommandPermissions(guildID: string, commandID: string, permissions: SlashCommandPermissions[]): Promise<GuildSlashCommandPermissions>;
     editGuild(guildID: string, options: GuildOptions, reason?: string): Promise<Guild>;
+    editGuildCommand(guildID: string, commandID: string, command: SlashCommandStructure): Promise<SlashCommand>;
     editGuildDiscovery(guildID: string, options?: DiscoveryOptions): Promise<DiscoveryMetadata>;
     editGuildEmoji(
       guildID: string,
@@ -1801,6 +1868,9 @@ declare namespace Eris {
     getChannel(channelID: string): AnyChannel;
     getChannelInvites(channelID: string): Promise<Invite[]>;
     getChannelWebhooks(channelID: string): Promise<Webhook[]>;
+    getCommand(commandID: string): Promise<SlashCommand>;
+    getCommandPermissions(guildID: string, commandID: string): Promise<GuildSlashCommandPermissions>;
+    getCommands(): Promise<SlashCommand[]>;
     getDiscoveryCategories(): Promise<DiscoveryCategory[]>;
     getDMChannel(userID: string): Promise<PrivateChannel>;
     getEmojiGuild(emojiID: string): Promise<Guild>;
@@ -1810,6 +1880,9 @@ declare namespace Eris {
     getGuildAuditLogs(guildID: string, limit?: number, before?: string, actionType?: number, userID?: string): Promise<GuildAuditLog>;
     getGuildBan(guildID: string, userID: string): Promise<{ reason?: string; user: User }>;
     getGuildBans(guildID: string): Promise<{ reason?: string; user: User }[]>;
+    getGuildCommand(guildID: string, commandID: string): Promise<SlashCommand>;
+    getGuildCommandPermissions(guildID: string): Promise<GuildSlashCommandPermissions[]>;
+    getGuildCommands(guildID: string): Promise<SlashCommand[]>;
     getGuildDiscovery(guildID: string): Promise<DiscoveryMetadata>;
     /** @deprecated */
     getGuildEmbed(guildID: string): Promise<Widget>;
@@ -2101,6 +2174,7 @@ declare namespace Eris {
     addDiscoverySubcategory(categoryID: string, reason?: string): Promise<DiscoverySubcategoryResponse>;
     addMemberRole(memberID: string, roleID: string, reason?: string): Promise<void>;
     banMember(userID: string, deleteMessageDays?: number, reason?: string): Promise<void>;
+    bulkEditCommands(commands: SlashCommandStructure[]): Promise<SlashCommand[]>;
     createChannel(name: string): Promise<TextChannel>;
     createChannel(name: string, type: 0, options?: CreateChannelOptions): Promise<TextChannel>;
     createChannel(name: string, type: 2, options?: CreateChannelOptions): Promise<VoiceChannel>;
@@ -2123,10 +2197,12 @@ declare namespace Eris {
     createChannel(name: string, type: 13, reason?: string, options?: CreateChannelOptions | string): Promise<StageChannel>;
     /** @deprecated */
     createChannel(name: string, type?: number, reason?: string, options?: CreateChannelOptions | string): Promise<unknown>;
+    createCommand(command: SlashCommandStructure): Promise<SlashCommand>;
     createEmoji(options: { image: string; name: string; roles?: string[] }, reason?: string): Promise<Emoji>;
     createRole(options: RoleOptions | Role, reason?: string): Promise<Role>;
     createTemplate(name: string, description?: string | null): Promise<GuildTemplate>;
     delete(): Promise<void>;
+    deleteCommand(commandID: string): Promise<void>;
     deleteDiscoverySubcategory(categoryID: string, reason?: string): Promise<void>;
     deleteEmoji(emojiID: string, reason?: string): Promise<void>;
     deleteIntegration(integrationID: string): Promise<void>;
@@ -2137,6 +2213,8 @@ declare namespace Eris {
     dynamicIconURL(format?: ImageFormat, size?: number): string;
     dynamicSplashURL(format?: ImageFormat, size?: number): string;
     edit(options: GuildOptions, reason?: string): Promise<Guild>;
+    editCommand(commandID: string, command: SlashCommandStructure): Promise<SlashCommand>;
+    editCommandPermissions(permissions: SlashCommandPermissions[]): Promise<GuildSlashCommandPermissions[]>;
     editDiscovery(options?: DiscoveryOptions): Promise<DiscoveryMetadata>;
     editEmoji(emojiID: string, options: { name: string; roles?: string[] }, reason?: string): Promise<Emoji>;
     editIntegration(integrationID: string, options: IntegrationOptions): Promise<void>;
@@ -2155,6 +2233,9 @@ declare namespace Eris {
     getAuditLogs(limit?: number, before?: string, actionType?: number, userID?: string): Promise<GuildAuditLog>;
     getBan(userID: string): Promise<{ reason?: string; user: User }>;
     getBans(): Promise<{ reason?: string; user: User }[]>;
+    getCommand(commandID: string): Promise<SlashCommand>;
+    getCommandPermissions(): Promise<GuildSlashCommandPermissions[]>;
+    getCommands(): Promise<SlashCommand[]>;
     getDiscovery(): Promise<DiscoveryMetadata>;
     /** @deprecated */
     getEmbed(): Promise<Widget>;
