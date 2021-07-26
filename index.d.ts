@@ -14,6 +14,7 @@ declare namespace Eris {
   export const VERSION: string;
 
   // TYPES
+
   // Cache
   type Uncached = { id: string };
 
@@ -54,6 +55,7 @@ declare namespace Eris {
   // Message
   type AdvancedMessageContent = {
     allowedMentions?: AllowedMentions;
+    components?: ActionRow[];
     content?: string;
     /** @deprecated */
     embed?: EmbedOptions;
@@ -64,11 +66,39 @@ declare namespace Eris {
     messageReferenceID?: string;
     tts?: boolean;
   };
+  type ActionRowComponents = Button | SelectMenu;
+  type Button = InteractionButton | URLButton;
+  type Component = ActionRow | ActionRowComponents;
   type ImageFormat = "jpg" | "jpeg" | "png" | "gif" | "webp";
   type MessageContent = string | AdvancedMessageContent;
   type MFALevel = 0 | 1;
   type PossiblyUncachedMessage = Message | { channel: TextableChannel | { id: string; guild?: Uncached }; guildID?: string; id: string };
-  type InteractionType = 1 | 2;
+
+  // Interaction
+  type InteractionType = 1 | 2 | 3;
+  type InteractionResponseType = 1 | 4 | 5 | 6 | 7;
+
+  type InteractionDataOptions = {
+    name: string;
+    type: SlashCommandOptionTypes;
+    value?: SlashCommandOptionTypes;
+    options?: InteractionDataOptions[];
+  };
+
+  type InteractionOptions = {
+    type: InteractionResponseType;
+    data?: InteractionContent;
+  };
+
+  type InteractionContent = {
+    allowedMentions?: AllowedMentions;
+    content?: string;
+    embeds?: EmbedOptions[];
+    flags?: number;
+    tts?: boolean;
+  };
+
+  type InteractionWebhookContent = Pick<WebhookPayload, "content" | "embeds" | "file" | "allowedMentions" | "tts" | "flags">;
 
   //Slash Commands
   type SlashCommandTypes = 1 | 2 | 3;
@@ -122,7 +152,7 @@ declare namespace Eris {
   type ConverterCommand = "./ffmpeg" | "./avconv" | "ffmpeg" | "avconv";
 
   // Webhook
-  type MessageWebhookContent = Pick<WebhookPayload, "content" | "embeds" | "file" | "allowedMentions">;
+  type MessageWebhookContent = Pick<WebhookPayload, "content" | "embeds" | "file" | "allowedMentions" | "components">;
 
   // INTERFACES
   // Internals
@@ -533,6 +563,7 @@ declare namespace Eris {
     selfStream: boolean;
     selfVideo: boolean;
   }
+
   interface EventListeners<T> {
     (event: "ready" | "disconnect", listener: () => void): T;
     (event: "callCreate" | "callRing" | "callDelete", listener: (call: Call) => void): T;
@@ -568,6 +599,7 @@ declare namespace Eris {
     (event: "guildUnavailable" | "unavailableGuildCreate", listener: (guild: UnavailableGuild) => void): T;
     (event: "guildUpdate", listener: (guild: Guild, oldGuild: OldGuild) => void): T;
     (event: "hello", listener: (trace: string[], id: number) => void): T;
+    (event: "interactionCreate", listener: (interaction: Interaction) => void): T;
     (event: "inviteCreate" | "inviteDelete", listener: (guild: Guild, invite: Invite) => void): T;
     (event: "messageCreate", listener: (message: Message<PossiblyUncachedTextableChannel>) => void): T;
     (event: "messageDelete" | "messageReactionRemoveAll", listener: (message: PossiblyUncachedMessage) => void): T;
@@ -603,6 +635,7 @@ declare namespace Eris {
       listener: (member: Member, newChannel: AnyVoiceChannel, oldChannel: AnyVoiceChannel) => void
     ): T;
     (event: "voiceStateUpdate", listener: (member: Member, oldState: OldVoiceState) => void): T;
+    (event: "voiceStateUpdate", listener: (member: UncachedMemberVoiceState, oldState: null) => void): T;
     (event: "warn" | "debug", listener: (message: string, id: number) => void): T;
     (event: "webhooksUpdate", listener: (data: WebhookData) => void): T;
     (event: string, listener: (...args: any[]) => void): T;
@@ -878,6 +911,10 @@ declare namespace Eris {
   }
 
   // Message
+  interface ActionRow {
+    components: ActionRowComponents[];
+    type: 1;
+  }
   interface ActiveMessages {
     args: string[];
     command: Command;
@@ -899,11 +936,37 @@ declare namespace Eris {
     url: string;
     width?: number;
   }
+  interface ButtonBase {
+    disabled?: boolean;
+    emoji?: Partial<PartialEmoji>;
+    label?: string;
+    type: 2;
+  }
+  interface SelectMenu {
+    custom_id: string;
+    disabled?: boolean;
+    max_values?: number;
+    min_values?: number;
+    options: SelectMenuOptions[];
+    placeholder?: string;
+    type: 3;
+  }
+  interface SelectMenuOptions {
+    default?: boolean;
+    description?: string;
+    emoji?: Partial<PartialEmoji>;
+    label: string;
+    value: string;
+  }
   interface GetMessageReactionOptions {
     after?: string;
     /** @deprecated */
     before?: string;
     limit?: number;
+  }
+  interface InteractionButton extends ButtonBase {
+    custom_id: string;
+    style: 1 | 2 | 3 | 4;
   }
   interface MessageActivity {
     party_id?: string;
@@ -954,6 +1017,10 @@ declare namespace Eris {
     id: string;
     name: string;
     format_type: Constants["StickerFormats"][keyof Constants["StickerFormats"]];
+  }
+  interface URLButton extends ButtonBase {
+    style: 5;
+    url: string;
   }
 
   // Presence
@@ -1030,6 +1097,10 @@ declare namespace Eris {
   }
 
   // Voice
+  interface UncachedMemberVoiceState {
+    id: string;
+    voiceState: OldVoiceState;
+  }
   interface VoiceConnectData {
     channel_id: string;
     endpoint: string;
@@ -1087,9 +1158,11 @@ declare namespace Eris {
     allowedMentions?: AllowedMentions;
     auth?: boolean;
     avatarURL?: string;
+    components?: ActionRow[];
     content?: string;
     embeds?: EmbedOptions[];
     file?: MessageFile | MessageFile[];
+    flags?: number;
     tts?: boolean;
     username?: string;
     wait?: boolean;
@@ -1380,6 +1453,17 @@ declare namespace Eris {
       COMMAND: 1;
       USER: 2;
       MESSAGE: 3;
+    InteractionTypes: {
+      ping: 1;
+      slashCommand: 2;
+      messageComponent: 3;
+    };
+    InteractionResponseTypes: {
+      PONG: 1;
+      CHANNEL_MESSAGE_WITH_SOURCE: 4;
+      DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE: 5;
+      DEFERRED_UPDATE_MESSAGE: 6;
+      UPDATE_MESSAGE: 7;
     };
   }
 
@@ -1688,6 +1772,7 @@ declare namespace Eris {
     createGuildEmoji(guildID: string, options: EmojiOptions, reason?: string): Promise<Emoji>;
     createGuildFromTemplate(code: string, name: string, icon?: string): Promise<Guild>;
     createGuildTemplate(guildID: string, name: string, description?: string | null): Promise<GuildTemplate>;
+    createInteractionResponse(interactionID: string, interactionToken: string, options: InteractionOptions): Promise<void>;
     createMessage(channelID: string, content: MessageContent, file?: MessageFile | MessageFile[]): Promise<Message>;
     createRole(guildID: string, options?: RoleOptions | Role, reason?: string): Promise<Role>;
     crosspostMessage(channelID: string, messageID: string): Promise<Message>;
@@ -2290,6 +2375,39 @@ declare namespace Eris {
     toJSON(props?: string[]): JSONCache;
   }
 
+  //Interaction
+  export class Interaction {
+    applicationID: string;
+    channelID: string;
+    data?: {
+      componentType?: 2 | 3;
+      id?: string;
+      custom_id?: string;
+      name?: string;
+      options?: InteractionDataOptions[];
+      values?: string[];
+    };
+    guildID?: string;
+    id: string;
+    member?: Member;
+    message?: Message;
+    token: string;
+    type: InteractionType;
+    user?: User;
+    version: number;
+    acknowledge(flags?: number): Promise<void>;
+    createFollowup(content: string | InteractionWebhookContent): Promise<Message>;
+    createMessage(content: string | InteractionContent): Promise<void>;
+    defer(flags?: number): Promise<void>;
+    deferUpdate(): Promise<void>;
+    deleteMessage(messageID: string): Promise<void>;
+    deleteOriginalMessage(): Promise<void>;
+    editMessage(messageID: string, content: string | MessageWebhookContent): Promise<Message>;
+    editOriginalMessage(content: string | MessageWebhookContent): Promise<Message>;
+    editParent(content: MessageWebhookContent): Promise<Message>;
+    getOriginalMessage(): Promise<Message>
+  }
+
   // If CT (count) is "withMetadata", it will not have count properties
   export class Invite<CT extends "withMetadata" | "withCount" | "withoutCount" = "withMetadata", CH extends InviteChannel = InviteChannel> extends Base {
     channel: CH;
@@ -2360,6 +2478,7 @@ declare namespace Eris {
     /** @deprecated */
     cleanContent: string;
     command?: Command;
+    components?: ActionRow[];
     content: string;
     createdAt: number;
     editedTimestamp?: number;
@@ -2378,9 +2497,9 @@ declare namespace Eris {
     reactions: { [s: string]: { count: number; me: boolean } };
     referencedMessage?: Message | null;
     roleMentions: string[];
+    stickerItems?: StickerItems[];
     /** @deprecated */
     stickers?: Sticker[];
-    stickerItems?: StickerItems[];
     timestamp: number;
     tts: boolean;
     type: number;
@@ -2657,7 +2776,7 @@ declare namespace Eris {
     addMessageReaction(messageID: string, reaction: string, userID: string): Promise<void>;
     createInvite(options?: CreateInviteOptions, reason?: string): Promise<Invite<"withMetadata", TextChannel>>;
     createMessage(content: MessageContent, file?: MessageFile | MessageFile[]): Promise<Message<TextChannel>>;
-    createWebhook(options: { name: string; avatar?: string | null}, reason?: string): Promise<Webhook>;
+    createWebhook(options: { name: string; avatar?: string | null }, reason?: string): Promise<Webhook>;
     deleteMessage(messageID: string, reason?: string): Promise<void>;
     deleteMessages(messageIDs: string[], reason?: string): Promise<void>;
     edit(options: Omit<EditChannelOptions, "icon" | "ownerID">, reason?: string): Promise<this>;
