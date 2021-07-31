@@ -80,8 +80,8 @@ declare namespace Eris {
 
   type InteractionDataOptions = {
     name: string;
-    type: SlashCommandOptionTypes;
-    value?: SlashCommandOptionTypes;
+    type: SlashCommandOptionType;
+    value?: SlashCommandOptionType;
     options?: InteractionDataOptions[];
   };
 
@@ -101,12 +101,12 @@ declare namespace Eris {
   type InteractionWebhookContent = Pick<WebhookPayload, "content" | "embeds" | "file" | "allowedMentions" | "tts" | "flags">;
 
   //Slash Commands
-  type SlashCommandTypes = 1 | 2 | 3;
+  type SlashCommandType = 1 | 2 | 3;
 
-  type SlashCommandOptionTypes = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
+  type SlashCommandOptionType = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
 
   type SlashCommandOptions = {
-    type: SlashCommandOptionTypes;
+    type: SlashCommandOptionType;
     name: string;
     description: string;
     required?: boolean;
@@ -120,7 +120,7 @@ declare namespace Eris {
     name: string;
     description: string;
     options?: SlashCommandOptions[];
-    type?: SlashCommandTypes;
+    type?: SlashCommandType;
     defaultPermission?: boolean;
   };
 
@@ -1434,6 +1434,18 @@ declare namespace Eris {
       RESUMED: 9;
       DISCONNECT: 13;
     };
+    InteractionTypes: {
+      PING:              1;
+      SLASH_COMMAND:     2;
+      MESSAGE_COMPONENT: 3;
+    };
+    InteractionResponseTypes: {
+      PONG: 1;
+      CHANNEL_MESSAGE_WITH_SOURCE: 4;
+      DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE: 5;
+      DEFERRED_UPDATE_MESSAGE: 6;
+      UPDATE_MESSAGE: 7;
+    };
     CommandOptionTypes: {
       SUB_COMMAND:       1;
       SUB_COMMAND_GROUP: 2;
@@ -1454,17 +1466,6 @@ declare namespace Eris {
       COMMAND: 1;
       USER: 2;
       MESSAGE: 3;
-    InteractionTypes: {
-      PING:              1;
-      SLASH_COMMAND:     2;
-      MESSAGE_COMPONENT: 3;
-    };
-    InteractionResponseTypes: {
-      PONG: 1;
-      CHANNEL_MESSAGE_WITH_SOURCE: 4;
-      DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE: 5;
-      DEFERRED_UPDATE_MESSAGE: 6;
-      UPDATE_MESSAGE: 7;
     };
   }
 
@@ -2392,21 +2393,21 @@ declare namespace Eris {
   }
 
   export class CommandInteraction extends Interaction {
-    type: 2;
     channelID: string;
-    data?: {
+    data: {
       id: string;
       name: string;
       resolved?: {
-        users?: {[id: string]: User}
-        members?: { [id: string]: Omit<Member, "user" | "deaf" | "mute"> }
-        roles?: { [id: string]: Role }
-        channels?: { [id: string]: PartialChannel }
+        users?: {[id: string]: User};
+        members?: { [id: string]: Omit<Member, "user" | "deaf" | "mute"> };
+        roles?: { [id: string]: Role };
+        channels?: { [id: string]: PartialChannel };
       };
       options?: InteractionDataOptions[];
     };
     guildID?: string;
     member?: Member;
+    type: 2;
     user?: User;
     acknowledge(flags?: number): Promise<void>;
     createFollowup(content: string | InteractionWebhookContent): Promise<Message>;
@@ -2421,8 +2422,8 @@ declare namespace Eris {
 
   export class ComponentInteraction extends Interaction {
     channelID: string;
-    data?: {
-      componentType?: 2 | 3;
+    data: {
+      componentType: 2 | 3;
       custom_id: string;
       values?: string[];
     };
@@ -2445,11 +2446,11 @@ declare namespace Eris {
 
   export class UnknownInteraction extends Interaction {
     channelID?: string;
-    data?: object;
+    data?: unknown;
     guildID?: string;
     member?: Member;
     message?: Message;
-    type: Exclude<number, InteractionType>;
+    type: number;
     user?: User;
     createFollowup(content: string | InteractionWebhookContent): Promise<Message>;
     createMessage(content: string | InteractionContent): Promise<void>;
