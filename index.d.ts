@@ -87,7 +87,7 @@ declare namespace Eris {
     data?: InteractionContent;
   };
 
-  type InteractionContent = Pick<WebhookPayload, "content" | "embeds" | "allowedMentions" | "tts" | "flags">
+  type InteractionContent = Pick<WebhookPayload, "content" | "embeds" | "allowedMentions" | "tts" | "flags">;
   type InteractionWebhookContent = Pick<WebhookPayload, "content" | "embeds" | "file" | "allowedMentions" | "tts" | "flags">;
 
   //Slash Commands
@@ -2366,6 +2366,7 @@ declare namespace Eris {
 
   //Interaction
   export class Interaction extends Base {
+    acknowledged: boolean;
     applicationID: string;
     id: string;
     token: string;
