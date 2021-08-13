@@ -78,7 +78,7 @@ declare namespace Eris {
   // Interaction
   type InteractionDataOptions = {
     name: string;
-    type: Constants["CommandOptionTypes"][keyof Constants["CommandOptionTypes"]];
+    type: Constants["ApplicationCommandOptionTypes"][keyof Constants["ApplicationCommandOptionTypes"]];
     value?: string;
     options?: InteractionDataOptions[];
   };
@@ -93,7 +93,7 @@ declare namespace Eris {
 
   //Application Commands
   type ApplicationCommandOptions = {
-    type: Constants["CommandOptionTypes"][keyof Constants["CommandOptionTypes"]];
+    type: Constants["ApplicationCommandOptionTypes"][keyof Constants["ApplicationCommandOptionTypes"]];
     name: string;
     description: string;
     required?: boolean;
@@ -108,7 +108,7 @@ declare namespace Eris {
     name: string;
     description?: string;
     options?: ApplicationCommandOptions[];
-    type?: Constants["CommandTypes"][keyof Constants["CommandTypes"]];
+    type?: Constants["ApplicationCommandTypes"][keyof Constants["ApplicationCommandTypes"]];
     defaultPermission?: boolean;
   };
 
@@ -116,7 +116,7 @@ declare namespace Eris {
 
   type ApplicationCommandPermissions = {
     id: string;
-    type: Constants["CommandPermissionTypes"][keyof Constants["CommandPermissionTypes"]];
+    type: Constants["ApplicationCommandPermissionTypes"][keyof Constants["ApplicationCommandPermissionTypes"]];
     permission: boolean;
   };
 
@@ -1435,7 +1435,7 @@ declare namespace Eris {
       DEFERRED_UPDATE_MESSAGE: 6;
       UPDATE_MESSAGE: 7;
     };
-    CommandOptionTypes: {
+    ApplicationCommandOptionTypes: {
       SUB_COMMAND:       1;
       SUB_COMMAND_GROUP: 2;
       STRING:            3;
@@ -1447,11 +1447,11 @@ declare namespace Eris {
       MENTIONABLE:       9;
       NUMBER:            10;
     };
-    CommandPermissionTypes: {
+    ApplicationCommandPermissionTypes: {
       ROLE: 1;
       USER: 2;
     };
-    CommandTypes: {
+    ApplicationCommandTypes: {
       CHAT_INPUT: 1;
       USER: 2;
       MESSAGE: 3;
@@ -2387,6 +2387,8 @@ declare namespace Eris {
     data: {
       id: string;
       name: string;
+      type: Constants["ApplicationCommandTypes"][keyof Constants["ApplicationCommandTypes"]];
+      target_id?: string;
       resolved?: {
         users?: Record<string, User>;
         members?: Record<string, Omit<Member, "user" | "deaf" | "mute">>;
