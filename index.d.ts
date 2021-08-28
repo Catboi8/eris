@@ -111,14 +111,45 @@ declare namespace Eris {
   type InteractionWebhookContent = Pick<WebhookPayload, "content" | "embeds" | "file" | "allowedMentions" | "tts" | "flags" | "components">;
 
   // Application Commands
-  interface ApplicationCommandOptions {
-    type: Constants["ApplicationCommandOptionTypes"][keyof Constants["ApplicationCommandOptionTypes"]];
+  // @TODO can't do it currently, but I need to check how deep
+  // sub commands & sub command groups can go (for more accurate typings)
+  // (no access to docs right now)
+  type ApplicationCommandOptions = ApplicationCommandOptionsSubCommand | ApplicationCommandOptionsSubCommandGroup | ApplicationCommandOptionsWithValue;
+  type ApplicationCommandOptionsWithValue = ApplicationCommandOptionsString | ApplicationCommandOptionsInteger | ApplicationCommandOptionsBoolean | ApplicationCommandOptionsUser | ApplicationCommandOptionsChannel | ApplicationCommandOptionsRole | ApplicationCommandOptionsMentionable | ApplicationCommandOptionsNumber;
+  interface ApplicationCommandOptionsSubCommand {
+    type: Constants["ApplicationCommandOptionTypes"]["SUB_COMMAND_GROUP"]
     name: string;
     description: string;
     required?: boolean;
-    choices?: { name: string; value: string | number}[];
-    options?: ApplicationCommandOptions[];
+    options: ApplicationCommandOptions[];
   }
+  interface ApplicationCommandOptionsSubCommandGroup {
+    type: Constants["ApplicationCommandOptionTypes"]["SUB_COMMAND_GROUP"]
+    name: string;
+    description: string;
+    required?: boolean;
+    options: ApplicationCommandOptions[];
+  }
+  interface ApplicationCommandOptionsString {
+    name: string;
+    type: Constants["ApplicationCommandOptionTypes"]["STRING"];
+    options: InteractionDataOptions[];
+    required?: boolean;
+    choices?: string[];
+  }
+  interface ApplicationCommandOptionWithValue<T extends (Constants["ApplicationCommandOptionTypes"])[keyof Constants["ApplicationCommandOptionTypes"]], V = unknown> {
+    type: T;
+    name: string;
+    description: string;
+    required?: boolean;
+  }
+  type ApplicationCommandOptionsInteger = InteractionDataOptionWithValue<Constants["ApplicationCommandOptionTypes"]["INTEGER"], number>;
+  type ApplicationCommandOptionsBoolean = InteractionDataOptionWithValue<Constants["ApplicationCommandOptionTypes"]["BOOLEAN"], boolean>;
+  type ApplicationCommandOptionsUser = InteractionDataOptionWithValue<Constants["ApplicationCommandOptionTypes"]["USER"], string>;
+  type ApplicationCommandOptionsChannel = InteractionDataOptionWithValue<Constants["ApplicationCommandOptionTypes"]["CHANNEL"], string>;
+  type ApplicationCommandOptionsRole = InteractionDataOptionWithValue<Constants["ApplicationCommandOptionTypes"]["ROLE"], string>;
+  type ApplicationCommandOptionsMentionable = InteractionDataOptionWithValue<Constants["ApplicationCommandOptionTypes"]["MENTIONABLE"], string>;
+  type ApplicationCommandOptionsNumber = InteractionDataOptionWithValue<Constants["ApplicationCommandOptionTypes"]["NUMBER"], number>;
 
   interface ApplicationCommand {
     id: string;
