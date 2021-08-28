@@ -2418,7 +2418,7 @@ declare namespace Eris {
   }
 
   export class PingInteraction extends Interaction {
-    type: 1;
+    type: Constants["InteractionTypes"]["PING"];
     acknowledge(): Promise<void>;
     pong(): Promise<void>;
   }
@@ -2441,7 +2441,7 @@ declare namespace Eris {
     };
     guildID?: string;
     member?: Member;
-    type: 2;
+    type: Constants["InteractionTypes"]["APPLICATION_COMMAND"];
     user?: User;
     acknowledge(flags?: number): Promise<void>;
     createFollowup(content: string | InteractionWebhookContent): Promise<Message>;
@@ -2470,6 +2470,7 @@ declare namespace Eris {
     data: ComponentInteractionButtonData | ComponentInteractionSelectMenuData;
     guildID?: string;
     member?: Member;
+    type: Constants["InteractionTypes"]["MESSAGE_COMPONENT"];
     message: Message;
     user?: User;
     acknowledge(): Promise<void>;
