@@ -133,7 +133,7 @@ declare namespace Eris {
   interface ApplicationCommandOptionsString {
     name: string;
     type: Constants["ApplicationCommandOptionTypes"]["STRING"];
-    options: InteractionDataOptions[];
+    description: string;
     required?: boolean;
     choices?: string[];
   }
