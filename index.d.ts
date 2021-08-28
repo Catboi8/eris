@@ -130,26 +130,27 @@ declare namespace Eris {
     required?: boolean;
     options: ApplicationCommandOptions[];
   }
-  interface ApplicationCommandOptionsString {
+  interface ApplicationCommandOptionWithChoices<T extends (Constants["ApplicationCommandOptionTypes"])[keyof Constants["ApplicationCommandOptionTypes"]]> {
     name: string;
-    type: Constants["ApplicationCommandOptionTypes"]["STRING"];
+    type: T;
     description: string;
     required?: boolean;
     choices?: string[];
   }
-  interface ApplicationCommandOptionWithValue<T extends (Constants["ApplicationCommandOptionTypes"])[keyof Constants["ApplicationCommandOptionTypes"]], V = unknown> {
+  interface ApplicationCommandOptionWithValue<T extends (Constants["ApplicationCommandOptionTypes"])[keyof Constants["ApplicationCommandOptionTypes"]]> {
     type: T;
     name: string;
     description: string;
     required?: boolean;
   }
-  type ApplicationCommandOptionsInteger = InteractionDataOptionWithValue<Constants["ApplicationCommandOptionTypes"]["INTEGER"], number>;
-  type ApplicationCommandOptionsBoolean = InteractionDataOptionWithValue<Constants["ApplicationCommandOptionTypes"]["BOOLEAN"], boolean>;
-  type ApplicationCommandOptionsUser = InteractionDataOptionWithValue<Constants["ApplicationCommandOptionTypes"]["USER"], string>;
-  type ApplicationCommandOptionsChannel = InteractionDataOptionWithValue<Constants["ApplicationCommandOptionTypes"]["CHANNEL"], string>;
-  type ApplicationCommandOptionsRole = InteractionDataOptionWithValue<Constants["ApplicationCommandOptionTypes"]["ROLE"], string>;
-  type ApplicationCommandOptionsMentionable = InteractionDataOptionWithValue<Constants["ApplicationCommandOptionTypes"]["MENTIONABLE"], string>;
-  type ApplicationCommandOptionsNumber = InteractionDataOptionWithValue<Constants["ApplicationCommandOptionTypes"]["NUMBER"], number>;
+  type ApplicationCommandOptionsString = ApplicationCommandOptionWithChoices<Constants["ApplicationCommandOptionTypes"]["STRING"]>;
+  type ApplicationCommandOptionsInteger = ApplicationCommandOptionWithChoices<Constants["ApplicationCommandOptionTypes"]["INTEGER"]>;
+  type ApplicationCommandOptionsBoolean = ApplicationCommandOptionWithValue<Constants["ApplicationCommandOptionTypes"]["BOOLEAN"]>;
+  type ApplicationCommandOptionsUser = ApplicationCommandOptionWithValue<Constants["ApplicationCommandOptionTypes"]["USER"]>;
+  type ApplicationCommandOptionsChannel = ApplicationCommandOptionWithValue<Constants["ApplicationCommandOptionTypes"]["CHANNEL"]>;
+  type ApplicationCommandOptionsRole = ApplicationCommandOptionWithValue<Constants["ApplicationCommandOptionTypes"]["ROLE"]>;
+  type ApplicationCommandOptionsMentionable = ApplicationCommandOptionWithValue<Constants["ApplicationCommandOptionTypes"]["MENTIONABLE"]>;
+  type ApplicationCommandOptionsNumber = ApplicationCommandOptionWithChoices<Constants["ApplicationCommandOptionTypes"]["NUMBER"]>;
 
   interface ApplicationCommand {
     id: string;
