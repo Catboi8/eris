@@ -2454,13 +2454,20 @@ declare namespace Eris {
     getOriginalMessage(): Promise<Message>
   }
 
+  interface ComponentInteractionButtonData {
+    component_type: Constants["ComponentTypes"]["BUTTON"];
+    custom_id: string;
+  }
+
+  interface ComponentInteractionSelectMenuData {
+    component_type: Constants["ComponentTypes"]["SELECT_MENU"];
+    custom_id: string;
+    values: string;
+  }
+
   export class ComponentInteraction<T extends PossiblyUncachedTextable = TextableChannel> extends Interaction {
     channel: T;
-    data: {
-      component_type: 2 | 3;
-      custom_id: string;
-      values?: string[];
-    };
+    data: ComponentInteractionButtonData | ComponentInteractionSelectMenuData;
     guildID?: string;
     member?: Member;
     message: Message;
