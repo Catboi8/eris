@@ -1483,6 +1483,11 @@ declare namespace Eris {
       USER: 2;
       MESSAGE: 3;
     };
+    ComponentTypes: {
+      ACTION_ROW: 1;
+      BUTTON: 2;
+      SELECT_MENU: 3;
+    }
   }
 
   // Selfbot
