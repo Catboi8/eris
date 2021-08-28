@@ -110,7 +110,7 @@ declare namespace Eris {
   type InteractionContent = Pick<WebhookPayload, "content" | "embeds" | "allowedMentions" | "tts" | "flags" | "components">;
   type InteractionWebhookContent = Pick<WebhookPayload, "content" | "embeds" | "file" | "allowedMentions" | "tts" | "flags" | "components">;
 
-  //Application Commands
+  // Application Commands
   interface ApplicationCommandOptions {
     type: Constants["ApplicationCommandOptionTypes"][keyof Constants["ApplicationCommandOptionTypes"]];
     name: string;
