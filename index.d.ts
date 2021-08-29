@@ -150,7 +150,6 @@ declare namespace Eris {
   type ApplicationCommandOptionsNumber = ApplicationCommandOptionWithChoices<Constants["ApplicationCommandOptionTypes"]["NUMBER"]>;
 
 
-  // @FIXME I'm not sure if this is how we want to go about this
   interface ApplicationCommand<T extends (Constants["ApplicationCommandTypes"])[keyof Constants["ApplicationCommandTypes"]] = (Constants["ApplicationCommandTypes"])[keyof Constants["ApplicationCommandTypes"]]> {
     id: string;
     application_id: string;
@@ -165,7 +164,6 @@ declare namespace Eris {
 
   type AnyApplicationCommand = ChatInputApplicationCommand | MessageApplicationCommand | UserApplicationCommand;
   type ChatInputApplicationCommand = ApplicationCommand<Constants["ApplicationCommandTypes"]["CHAT_INPUT"]>;
-  // @TODO check if other types use permissions
   type MessageApplicationCommand = Omit<ApplicationCommand<Constants["ApplicationCommandTypes"]["USER"]>, "description" | "options">;
   type UserApplicationCommand = Omit<ApplicationCommand<Constants["ApplicationCommandTypes"]["MESSAGE"]>, "description" | "options">;
 
