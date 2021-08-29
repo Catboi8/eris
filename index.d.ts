@@ -156,7 +156,8 @@ declare namespace Eris {
     application_id: string;
     guild_id?: string;
     name: string;
-    description: string;
+    // I think never is the best we can do
+    description: T extends Constants["ApplicationCommandTypes"]["CHAT_INPUT"] ? string : never;
     options?: ApplicationCommandOptions[];
     type: T;
     defaultPermission?: boolean;
