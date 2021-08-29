@@ -140,7 +140,7 @@ declare namespace Eris {
     description: string;
     required?: boolean;
   }
-  
+
   type ApplicationCommandOptionsString = ApplicationCommandOptionWithChoices<Constants["ApplicationCommandOptionTypes"]["STRING"]>;
   type ApplicationCommandOptionsInteger = ApplicationCommandOptionWithChoices<Constants["ApplicationCommandOptionTypes"]["INTEGER"]>;
   type ApplicationCommandOptionsBoolean = ApplicationCommandOptionWithValue<Constants["ApplicationCommandOptionTypes"]["BOOLEAN"]>;
@@ -2500,7 +2500,7 @@ declare namespace Eris {
   interface ComponentInteractionSelectMenuData {
     component_type: Constants["ComponentTypes"]["SELECT_MENU"];
     custom_id: string;
-    values: string;
+    values: string[];
   }
 
   export class ComponentInteraction<T extends PossiblyUncachedTextable = TextableChannel> extends Interaction {
@@ -2510,7 +2510,6 @@ declare namespace Eris {
     member?: Member;
     message: Message;
     type: Constants["InteractionTypes"]["MESSAGE_COMPONENT"];
-
     user?: User;
     acknowledge(): Promise<void>;
     createFollowup(content: string | InteractionWebhookContent): Promise<Message>;
