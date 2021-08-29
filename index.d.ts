@@ -111,9 +111,6 @@ declare namespace Eris {
   type InteractionWebhookContent = Pick<WebhookPayload, "content" | "embeds" | "file" | "allowedMentions" | "tts" | "flags" | "components">;
 
   // Application Commands
-  // @TODO can't do it currently, but I need to check how deep
-  // sub commands & sub command groups can go (for more accurate typings)
-  // (no access to docs right now)
   type ApplicationCommandOptions = ApplicationCommandOptionsSubCommand | ApplicationCommandOptionsSubCommandGroup | ApplicationCommandOptionsWithValue;
   type ApplicationCommandOptionsWithValue = ApplicationCommandOptionsString | ApplicationCommandOptionsInteger | ApplicationCommandOptionsBoolean | ApplicationCommandOptionsUser | ApplicationCommandOptionsChannel | ApplicationCommandOptionsRole | ApplicationCommandOptionsMentionable | ApplicationCommandOptionsNumber;
   interface ApplicationCommandOptionsSubCommand {
@@ -121,14 +118,14 @@ declare namespace Eris {
     name: string;
     description: string;
     required?: boolean;
-    options: ApplicationCommandOptions[];
+    options: ApplicationCommandOptionsWithValue[];
   }
   interface ApplicationCommandOptionsSubCommandGroup {
     type: Constants["ApplicationCommandOptionTypes"]["SUB_COMMAND_GROUP"];
     name: string;
     description: string;
     required?: boolean;
-    options: ApplicationCommandOptions[];
+    options: (ApplicationCommandOptionsSubCommand | ApplicationCommandOptionsWithValue)[];
   }
   interface ApplicationCommandOptionWithChoices<T extends (Constants["ApplicationCommandOptionTypes"])[keyof Constants["ApplicationCommandOptionTypes"]]> {
     name: string;
