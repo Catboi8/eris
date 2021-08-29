@@ -140,6 +140,7 @@ declare namespace Eris {
     description: string;
     required?: boolean;
   }
+  
   type ApplicationCommandOptionsString = ApplicationCommandOptionWithChoices<Constants["ApplicationCommandOptionTypes"]["STRING"]>;
   type ApplicationCommandOptionsInteger = ApplicationCommandOptionWithChoices<Constants["ApplicationCommandOptionTypes"]["INTEGER"]>;
   type ApplicationCommandOptionsBoolean = ApplicationCommandOptionWithValue<Constants["ApplicationCommandOptionTypes"]["BOOLEAN"]>;
@@ -148,7 +149,6 @@ declare namespace Eris {
   type ApplicationCommandOptionsRole = ApplicationCommandOptionWithValue<Constants["ApplicationCommandOptionTypes"]["ROLE"]>;
   type ApplicationCommandOptionsMentionable = ApplicationCommandOptionWithValue<Constants["ApplicationCommandOptionTypes"]["MENTIONABLE"]>;
   type ApplicationCommandOptionsNumber = ApplicationCommandOptionWithChoices<Constants["ApplicationCommandOptionTypes"]["NUMBER"]>;
-
 
   interface ApplicationCommand<T extends (Constants["ApplicationCommandTypes"])[keyof Constants["ApplicationCommandTypes"]] = (Constants["ApplicationCommandTypes"])[keyof Constants["ApplicationCommandTypes"]]> {
     id: string;
@@ -2896,37 +2896,13 @@ declare namespace Eris {
     off(event: string, listener: (...args: any[]) => void): this;
     once<K extends keyof StreamEvents>(event: K, listener: (...args: StreamEvents[K]) => void): this;
     once(event: string, listener: (...args: any[]) => void): this;
-play(resource: ReadableStream | string, options?: VoiceResourceOptions): void;
-
-
-
-    
+    play(resource: ReadableStream | string, options?: VoiceResourceOptions): void;
     remove(connection: VoiceConnection): void;
-
-
-
     setSpeaking(value: boolean): void;
-
-
     setVolume(volume: number): void;
-
-
     stopPlaying(): void;
-
-
-
-
-
-
     on<K extends keyof StreamEvents>(event: K, listener: (...args: StreamEvents[K]) => void): this;
-
-
     on(event: string, listener: (...args: any[]) => void): this;
-
-
-
-
-
   }
 
   export class StageChannel extends VoiceChannel {
