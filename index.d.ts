@@ -88,7 +88,7 @@ declare namespace Eris {
     type: Constants["ApplicationCommandOptionTypes"]["SUB_COMMAND_GROUP"];
     options: InteractionDataOptions[];
   }
-  interface InteractionDataOptionWithValue<T extends (Constants["ApplicationCommandOptionTypes"])[keyof Constants["ApplicationCommandOptionTypes"]], V = unknown> {
+  interface InteractionDataOptionWithValue<T extends (Constants["ApplicationCommandOptionTypes"])[Exclude<keyof Constants["ApplicationCommandOptionTypes"], "SUB_COMMAND" | "SUB_COMMAND_GROUP">] = (Constants["ApplicationCommandOptionTypes"])[Exclude<keyof Constants["ApplicationCommandOptionTypes"], "SUB_COMMAND" | "SUB_COMMAND_GROUP">], V = unknown> {
     name: string;
     type: T;
     value: V;
