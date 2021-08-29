@@ -135,7 +135,7 @@ declare namespace Eris {
     type: T;
     description: string;
     required?: boolean;
-    choices?: string[];
+    choices?: { name: string; value: T extends Constants["ApplicationCommandOptionTypes"]["STRING"] ? string : number }[];
   }
   interface ApplicationCommandOptionWithValue<T extends (Constants["ApplicationCommandOptionTypes"])[keyof Constants["ApplicationCommandOptionTypes"]]> {
     type: T;
