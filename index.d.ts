@@ -2493,11 +2493,13 @@ declare namespace Eris {
   }
 
   interface ComponentInteractionButtonData {
+    id: string;
     component_type: Constants["ComponentTypes"]["BUTTON"];
     custom_id: string;
   }
 
   interface ComponentInteractionSelectMenuData {
+    id: string;
     component_type: Constants["ComponentTypes"]["SELECT_MENU"];
     custom_id: string;
     values: string[];
