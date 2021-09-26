@@ -137,17 +137,34 @@ declare namespace Eris {
     required?: boolean;
   }
 
-  type ApplicationCommandOptionsString = Omit<ApplicationCommandOptionWithChoices<Constants["ApplicationCommandOptionTypes"]["STRING"]>, "choices" | "autocomplete">
-  & ({ choices: ApplicationCommandOptionChoice<Constants["ApplicationCommandOptionTypes"]["STRING"]>[]; autocomplete?: false } | { autocomplete: true });
-  type ApplicationCommandOptionsInteger = Omit<ApplicationCommandOptionWithChoices<Constants["ApplicationCommandOptionTypes"]["INTEGER"]>, "choices" | "autocomplete">
-  & ({ choices: ApplicationCommandOptionChoice<Constants["ApplicationCommandOptionTypes"]["INTEGER"]>[]; autocomplete?: false } | { autocomplete: true });
+  // String
+  type ApplicationCommandOptionsString = ApplicationCommandOptionsStringWithAutocomplete | ApplicationCommandOptionsStringWithoutAutocomplete;
+  type ApplicationCommandOptionsStringWithAutocomplete = Omit<ApplicationCommandOptionWithChoices<Constants["ApplicationCommandOptionTypes"]["STRING"]>, "choices">
+  & { autocomplete: true };
+  type ApplicationCommandOptionsStringWithoutAutocomplete = Omit<ApplicationCommandOptionWithChoices<Constants["ApplicationCommandOptionTypes"]["STRING"]>, "autocomplete">
+  & { autocomplete?: false };
+  // Integer
+  type ApplicationCommandOptionsInteger = ApplicationCommandOptionsIntegerWithAutocomplete | ApplicationCommandOptionsIntegerWithoutAutocomplete;
+  type ApplicationCommandOptionsIntegerWithAutocomplete = Omit<ApplicationCommandOptionWithChoices<Constants["ApplicationCommandOptionTypes"]["INTEGER"]>, "choices">
+  & { autocomplete: true };
+  type ApplicationCommandOptionsIntegerWithoutAutocomplete = Omit<ApplicationCommandOptionWithChoices<Constants["ApplicationCommandOptionTypes"]["INTEGER"]>, "autocomplete">
+  & {  autocomplete?: false };
+  // Boolean
   type ApplicationCommandOptionsBoolean = ApplicationCommandOption<Constants["ApplicationCommandOptionTypes"]["BOOLEAN"]>;
+  // User
   type ApplicationCommandOptionsUser = ApplicationCommandOption<Constants["ApplicationCommandOptionTypes"]["USER"]>;
+  // Channel
   type ApplicationCommandOptionsChannel = ApplicationCommandOption<Constants["ApplicationCommandOptionTypes"]["CHANNEL"]> & { channel_types?: ChannelTypes };
+  // Role
   type ApplicationCommandOptionsRole = ApplicationCommandOption<Constants["ApplicationCommandOptionTypes"]["ROLE"]>;
+  // Mentionable
   type ApplicationCommandOptionsMentionable = ApplicationCommandOption<Constants["ApplicationCommandOptionTypes"]["MENTIONABLE"]>;
-  type ApplicationCommandOptionsNumber = Omit<ApplicationCommandOptionWithChoices<Constants["ApplicationCommandOptionTypes"]["NUMBER"]>, "choices" | "autocomplete">
-  & ({ choices: ApplicationCommandOptionChoice<Constants["ApplicationCommandOptionTypes"]["NUMBER"]>[]; autocomplete?: false } | { autocomplete: true });
+  // Number
+  type ApplicationCommandOptionsNumber = ApplicationCommandOptionsNumberWithAutocomplete | ApplicationCommandOptionsNumberWithoutAutocomplete;
+  type ApplicationCommandOptionsNumberWithAutocomplete = Omit<ApplicationCommandOptionWithChoices<Constants["ApplicationCommandOptionTypes"]["NUMBER"]>, "choices">
+  & { autocomplete: true };
+  type ApplicationCommandOptionsNumberWithoutAutocomplete = Omit<ApplicationCommandOptionWithChoices<Constants["ApplicationCommandOptionTypes"]["NUMBER"]>, "autocomplete">
+  & { autocomplete?: false };
 
   interface ApplicationCommand<T extends (Constants["ApplicationCommandTypes"])[keyof Constants["ApplicationCommandTypes"]]
   = (Constants["ApplicationCommandTypes"])[keyof Constants["ApplicationCommandTypes"]]> {
