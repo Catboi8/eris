@@ -2545,7 +2545,7 @@ declare namespace Eris {
 
   export class ComponentInteraction<T extends PossiblyUncachedTextable = TextableChannel> extends Interaction {
     channel: T;
-    data: ComponentInteractionButtonData | ComponentInteractionSelectMenuData | unknown;
+    data: ComponentInteractionButtonData | ComponentInteractionSelectMenuData;
     guildID?: string;
     member?: Member;
     message: Message;
